@@ -9,4 +9,3 @@ pandas
 joblib
 numpy
 keras
-cv2==21.3.1
