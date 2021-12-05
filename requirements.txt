@@ -8,7 +8,6 @@ flask
 pandas
 joblib
 numpy
-urllib
 keras
 skimage
 cv2
