@@ -1,0 +1,14 @@
+keras
+tensorflow
+scikit-image
+opencv-contrib-python
+pytesseract
+tesseract
+flask
+pandas
+joblib
+numpy
+urllib
+keras
+skimage
+cv2
