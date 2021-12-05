@@ -9,5 +9,4 @@ pandas
 joblib
 numpy
 keras
-skimage
 cv2
