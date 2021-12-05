@@ -10,4 +10,3 @@ joblib
 numpy
 keras
 opencv-python-headless
-libgtk2.0-dev
