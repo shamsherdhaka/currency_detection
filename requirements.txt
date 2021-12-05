@@ -10,5 +10,3 @@ joblib
 numpy
 keras
 opencv-python-headless
-request
-
