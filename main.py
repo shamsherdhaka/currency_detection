@@ -1,28 +1,32 @@
 from flask import Flask, render_template, request
+from tkinter import *
+from tkinter import messagebox
 import pandas as pd
+import string
 import joblib
 from PIL import Image
+from gtts import gTTS
 import numpy as np
 import urllib.request
 import urllib.parse
-
+import pyttsx3
 import keras
 from keras.models import load_model
 from keras.preprocessing import image as im
-
+from playsound import playsound
 from skimage import color
 from skimage import io
-
+import os
 import cv2
-
+import sys
 import pytesseract
-
 import tensorflow as tf
+
 global graph,model2,autoencoder
 graph = tf.compat.v1.get_default_graph()
 
 app = Flask(__name__)
-model2 = load_model('final.h5')    #Lenet-aw.h5
+model2 = load_model('Lenet-aw.h5')    #Lenet-aw.h5
 
 autoencoder = load_model('happyHack.h5')
 
@@ -30,15 +34,37 @@ autoencoder = load_model('happyHack.h5')
 def index():
     return render_template('index.html')
 
+
+def take_picture():
+        videoCaptureObject = cv2.VideoCapture(0)
+        while(True):
+                ret,frame = videoCaptureObject.read()
+                cv2.imshow('Capturing Video',frame)
+                cv2.imwrite('NewPicture.jpg',frame)
+                if(cv2.waitKey(1)):
+                        break
+                videoCaptureObject.release()
+                cv2.destroyAllWindows()
+
+def take_photo():
+        tkWindow = Tk()
+        tkWindow.geometry('250x350')
+        tkWindow.title('Take Photo of the currency')
+
+        button = Button(tkWindow,text = 'Click',command = take_picture)
+        button.pack()
+        tkWindow.mainloop()
+
 @app.route('/', methods=['POST'])
 def get():
 	input = dict(request.form)
+	print("filename=",request.form.get('imgname'))
 
-
-	print("filename=",request.form.get('imgname'))  
-
-	print("filename=",input['imgname'][0])   
-
+	print("filename0=",input['imgname'][0])   
+	print("filename1=",input['imgname'][1])   
+	note_value = input['imgname'][0] + input['imgname'][1] + input['imgname'][2] 
+	note_value = note_value.replace('.','')
+	print('note_value=', note_value)
 	v= request.form.get('imgname')
 	
 
@@ -82,10 +108,17 @@ def get():
 	number[number <= 170] = 0
 
 
-	#text = pytesseract.image_to_string(number, config=config)
-	text = '1'
+	text = pytesseract.image_to_string(number, config=config)
+	language = 'en'
 	print("text=",text)
+	if text.strip() == '':
+		note_value = note_value + ' counterfiet'
+	else:
+		note_value = note_value + ' genuine'
 
+	myobj = gTTS(text=note_value, lang=language, slow=False)
+	myobj.save('welcome.mp3')
+	playsound('welcome.mp3')
 	xtest=cv2.imread(v, 0)
 	xtest = cv2.resize(xtest,(256,256))
 	xtest=xtest.reshape(-1,256,256,1)
@@ -110,5 +143,5 @@ def get():
 	return ret;
     
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=4000)
+    app.run(host='0.0.0.0', debug=False, port=4000, use_reloader=True)
 
